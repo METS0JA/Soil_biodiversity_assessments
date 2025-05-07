@@ -13,7 +13,7 @@ new Vue({
         numSites: 1,
         numSamples: 9,
         pcrTime: 1,
-        samplesPerRun: 1,
+        samplesPerRun: 96,
         dnaExtractionTime: 1,
         numberofSamplesExtraction: 24,
         personalHourRate: 0,
