@@ -4,28 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My GitHub Pages Site</title>
-    <!-- Link to CSS file -->
+    <!-- Vue.js CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.6.14/dist/vuetify.min.css" rel="stylesheet">
+    <!-- Material Design Icons (required by Vuetify) -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <!-- Your custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .message-text {
+            white-space: pre-line;
+            font-size: 17px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My GitHub Pages Site</h1>
-    </header>
-    
-    <main>
-        <section>
-            <h2>About This Project</h2>
-            <p>This is a basic GitHub Pages site with CSS and JavaScript.</p>
-            <button id="demo-button">Click Me!</button>
-            <p id="demo-output"></p>
-        </section>
-    </main>
-    
-    <footer>
-        <p>&copy; 2023 My Project</p>
-    </footer>
+    <div id="app">
+        <v-app>
+            <v-container class="px-0 py-0">
+                <!-- Custom Hero Section instead of standard app-bar -->
+                <div class="page-hero" style="background-image: url(https://sisu.ut.ee/wp-content/uploads/sites/474/anigif.gif); height: 200px; background-size: cover; background-position: center; position: relative;">
+                    <div class="hero-overlay">
+                    </div>
+                </div>
+            </v-container>
 
-    <!-- Link to JavaScript file (at the end of body for better performance) -->
+            <v-main>
+                <v-container>
+                    <v-row>
+                        <v-col cols="12" class="px-0">
+                            <v-card>
+                                <v-card-title>Sequencing Cost Calculator</v-card-title>
+                                <v-card-text>
+                                    <v-form>
+                                        <!-- Pooled/Unpooled Radio Buttons -->
+                                        <v-radio-group v-model="poolingMethod" row>
+                                            <v-radio label="Pooled" value="pooled"></v-radio>
+                                            <v-radio label="Unpooled" value="unpooled"></v-radio>
+                                        </v-radio-group>
+                                        
+                                        <!-- Select Inputs Side by Side -->
+                                        <v-row>
+                                            <v-col cols="12" md="6">
+                                                <!-- Organisms Select -->
+                                                <v-select
+                                                    v-model="selectedOrganism"
+                                                    :items="organisms"
+                                                    label="Select Organism"
+                                                    outlined
+                                                ></v-select>
+                                            </v-col>
+                                            <v-col cols="12" md="6">
+                                                <!-- Sequencing Platform Select -->
+                                                <v-select
+                                                    v-model="selectedPlatform"
+                                                    :items="platforms"
+                                                    label="Sequencing Platform"
+                                                    outlined
+                                                ></v-select>
+                                            </v-col>
+                                        </v-row>
+                                        
+                                        <!-- Numeric Inputs -->
+                                        <v-row>
+                                            <v-col cols="12" md="6">
+                                                <v-text-field
+                                                    v-model.number="numSites"
+                                                    label="Number of Sites"
+                                                    type="number"
+                                                    outlined
+                                                    min="1"
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="6">
+                                                <v-text-field
+                                                    v-model.number="numSubsamples"
+                                                    label="Number of Subsamples"
+                                                    type="number"
+                                                    outlined
+                                                    min="1"
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="6">
+                                                <v-text-field
+                                                    v-model.number="numReads"
+                                                    label="Number of Reads"
+                                                    type="number"
+                                                    outlined
+                                                    min="1"
+                                                ></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="6">
+                                                <v-text-field
+                                                    v-model.number="pricePerLibrary"
+                                                    label="Price per Library"
+                                                    type="number"
+                                                    outlined
+                                                    prefix="$"
+                                                    min="0"
+                                                ></v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                        
+                                        <v-btn 
+                                            color="primary" 
+                                            @click="buttonClicked"
+                                            class="mt-4"
+                                        >
+                                            Calculate
+                                        </v-btn>
+                                    </v-form>
+                                    
+                                    <p :class="{ 'blue--text': isBlue, 'red--text': !isBlue, 'message-text': true }" class="mt-4">
+                                        {{ message }}
+                                    </p>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-main>
+
+            <v-footer app>
+                <span>&copy; {{ new Date().getFullYear() }} My Project</span>
+            </v-footer>
+        </v-app>
+    </div>
+
+    <!-- Vue.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- Vuetify CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.6.14/dist/vuetify.js"></script>
+    <!-- Your JS -->
     <script src="script.js"></script>
 </body>
 </html>
