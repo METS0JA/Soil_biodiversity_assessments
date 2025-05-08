@@ -11,17 +11,18 @@ new Vue({
         selectedStrategy: null,
         poolingMethod: ['Soil pooling', 'Unpooled', 'DNA Pooling'],
         numSites: 1,
-        numSamples: 9,
+        numSamples: 10,
         pcrTime: 1,
-        samplesPerRun: 96,
-        dnaExtractionTime: 1,
-        numberofSamplesExtraction: 24,
+        samplesPerPCRrun: 96,
+        dnaExtractionTime: 2,
+        samplesPerDNAextraction: 24,
         personalHourRate: 0,
         poolingNumber: 9,
 
         // Consumables table
         consumableHeaders: [
             { text: 'Item', value: 'name', sortable: true },
+            { text: 'Category', value: 'category', sortable: true },
             { text: 'Price ($)', value: 'price', sortable: true },
             { text: 'Total Volume', value: 'totalVolume', sortable: true },
             { text: 'Volume per Sample', value: 'volumePerSample', sortable: true },
@@ -32,16 +33,20 @@ new Vue({
         editedIndex: -1,
         editedItem: {
             name: '',
+            category: '',
             price: 0,
             totalVolume: 0,
             volumePerSample: 0
         },
         defaultItem: {
             name: '',
+            category: '',
             price: 0,
             totalVolume: 0,
             volumePerSample: 0
-        }
+        },
+        consumableWarnings: [],
+        showConsumableWarningDialog: false
     },
     computed: {
         formTitle() {
@@ -72,27 +77,34 @@ new Vue({
             nrOfSamplesForPCR = this.numSites * this.numSamples / this.poolingNumber;
            }    
             
-           let dnaExtractionHours = nrOfSamplesForExtraction / this.numberofSamplesExtraction * this.dnaExtractionTime;
-           let pcrHours = nrOfSamplesForPCR / this.samplesPerRun * this.pcrTime;
+           let dnaExtractionHours = Math.ceil(nrOfSamplesForExtraction / this.samplesPerDNAextraction) * this.dnaExtractionTime;
+           let pcrHours = Math.ceil(nrOfSamplesForPCR / this.samplesPerPCRrun) * this.pcrTime;
            let laborCost = (pcrHours + dnaExtractionHours) * this.personalHourRate;
+           let consumablesCost = this.calculateConsumablesCost(nrOfSamplesForPCR, nrOfSamplesForExtraction);
+           let totalCost = laborCost + consumablesCost;
+            
+            // Show warning dialog if any consumable is insufficient
+            if (this.consumableWarnings.length > 0) {
+                this.showConsumableWarningDialog = true;
+            }
             
             this.message = `Total cost estimate: $${totalCost}\n` +
-                          `Labor cost: $${laborCost} (${totalHours} hours)\n` +
+                          `Labor cost: $${laborCost} (${pcrHours + dnaExtractionHours} hours)\n` +
                           `- DNA extraction: $${dnaExtractionHours * this.personalHourRate} (${dnaExtractionHours} hours)\n` +
                           `- PCR work: $${pcrHours * this.personalHourRate} (${pcrHours} hours)\n` +
-                          `Consumables cost: $${consumablesCost} (${totalSamples} samples)`;
+                          `Consumables cost: $${consumablesCost} (${nrOfSamplesForPCR} samples)`;
             this.isBlue = true;
             
             console.log('Form submitted:', {
                 strategy: this.selectedStrategy,
                 sites: this.numSites,
                 samples: this.numSamples,
-                totalSamples: totalSamples,
-                totalHours: totalHours,
+                nrOfSamplesForExtraction: nrOfSamplesForExtraction,
+                nrOfSamplesForPCR: nrOfSamplesForPCR,
                 dnaExtractionHours: dnaExtractionHours,
-                pcrHours: totalHours - dnaExtractionHours,
+                pcrHours: pcrHours,
                 laborCost: laborCost,
-                consumablesCost: consumablesCost,
+                consumablesCost: this.calculateConsumablesCost(nrOfSamplesForPCR),
                 totalCost: totalCost
             });
         },
@@ -126,8 +138,8 @@ new Vue({
         },
 
         saveConsumable() {
-            if (!this.editedItem.name || !this.editedItem.price || !this.editedItem.totalVolume || !this.editedItem.volumePerSample) {
-                alert('Please fill in all fields');
+            if (!this.editedItem.name || !this.editedItem.category || !this.editedItem.price || !this.editedItem.totalVolume || !this.editedItem.volumePerSample) {
+                alert('Please fill in all fields, including category');
                 return;
             }
 
@@ -139,11 +151,21 @@ new Vue({
             this.closeConsumableDialog();
         },
 
-        calculateConsumablesCost(totalSamples) {
+        calculateConsumablesCost(nrOfSamplesForPCR, nrOfSamplesForExtraction) {
+            this.consumableWarnings = [];
             return this.consumables.reduce((total, item) => {
-                const samplesPerItem = Math.floor(item.totalVolume / item.volumePerSample);
-                const itemsNeeded = Math.ceil(totalSamples / samplesPerItem);
-                return total + (itemsNeeded * item.price);
+                let relevantSamples = 0;
+                if (item.category === 'DNA extraction') {
+                    relevantSamples = nrOfSamplesForExtraction;
+                } else if (item.category === 'PCR') {
+                    relevantSamples = nrOfSamplesForPCR;
+                }
+                const totalVolumeNeeded = item.volumePerSample * relevantSamples;
+                if (totalVolumeNeeded > item.totalVolume) {
+                    this.consumableWarnings.push(`Not enough '${item.name}' for ${item.category}: need ${totalVolumeNeeded}, have ${item.totalVolume}`);
+                }
+                const unitsNeeded = totalVolumeNeeded / item.totalVolume;
+                return total + (unitsNeeded * item.price);
             }, 0);
         }
     },
