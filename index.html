@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Pages Site</title>
+    <title></title>
     <!-- Vue.js CDN -->
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.6.14/dist/vuetify.min.css" rel="stylesheet">
     <!-- Material Design Icons (required by Vuetify) -->
@@ -185,13 +185,94 @@
                                                     </v-row>
                                                 </v-card-text>
                                             </v-col>
+                                            <!-- Labor -->
+                                            <v-col cols="12">
+                                                <v-card-title style="padding-left: 0px; color: black;" class="d-flex align-left pt-10">
+                                                    Sequencing Costs
+                                                </v-card-title>
+                                                <v-card-text class="pa-0">
+                                                    <v-row>
+                                                        <v-col cols="12" md="4">
+                                                            <v-select
+                                                                v-model="organism"
+                                                                :items="organisms"
+                                                                label="Organism"
+                                                                outlined
+                                                            ></v-select>
+                                                        </v-col>
+                                                        <v-col cols="12" md="4">
+                                                            <v-text-field
+                                                                v-model.number="samplesPerLibrary"
+                                                                label="Number of samples in one library"
+                                                                type="number"
+                                                                outlined
+                                                                min="0"
+                                                                :rules="[v => v >= 1 || 'Value must be greater than or equal to 1']"
+                                                            ></v-text-field>
+                                                        </v-col>
+                                                        <v-col cols="12" md="4">
+                                                            <v-text-field
+                                                                v-model.number="costOfLibrary"
+                                                                label="Cost of library preparation"
+                                                                type="number"
+                                                                outlined
+                                                                min="0"
+                                                                :rules="[v => v >= 0 || 'Value must be greater than or equal to 0']"
+                                                            ></v-text-field>
+                                                        </v-col>
+                                                        <v-col cols="12" md="4">
+                                                            <v-text-field
+                                                                v-model.number="pricePerSample"
+                                                                label="Price of each sample"
+                                                                prefix="$"
+                                                                type="number"
+                                                                outlined
+                                                                min="0"
+                                                                :rules="[v => v >= 1 || 'Value must be greater than or equal to 1']"
+                                                            ></v-text-field>
+                                                        </v-col>
+                                                        <v-col cols="12" md="4">
+                                                            <v-text-field
+                                                                v-model.number="storageOfPlatform"
+                                                                label="Storage of platform"
+                                                                type="number"
+                                                                outlined
+                                                                min="0"
+                                                                :rules="[v => v >= 0 || 'Value must be greater than or equal to 0']"
+                                                            ></v-text-field>
+                                                        </v-col>
+                                                        <v-col cols="12" md="4">
+                                                            <v-slider
+                                                                v-model="sequencingDepth"
+                                                                :min="sequencingDepthConfig.range ? sequencingDepthConfig.min : 0"
+                                                                :max="sequencingDepthConfig.range ? sequencingDepthConfig.max : 100"
+                                                                :step="sequencingDepthConfig.range ? 0.1 : 1"
+                                                                label="Sequencing depth"
+                                                                thumb-label="always"
+                                                                :thumb-size="24"
+                                                                :track-color="'grey'"
+                                                                :color="'grey'"
+                                                            ></v-slider>
+                                                            <div class="mb-2">
+                                                                <span class="text-caption">Recommended {{ organism === 'Bacteria' ? 'range' : 'value' }}: 
+                                                                    <span class="font-weight-bold">
+                                                                        {{ organism === 'Bacteria' ? 
+                                                                            sequencingDepthConfig.min + '-' + sequencingDepthConfig.max + '%' : 
+                                                                            sequencingDepth + '%' }}
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </v-col>
+                                                    </v-row>
+                                                </v-card-text>
+                                            </v-col>
                                         </v-row>
                                         
                                         <v-btn 
                                             color="black" 
                                             @click="buttonClicked"
                                             outlined
-                                            style="background-color: white;"
+                                            style="background-color: white; width: 150px; border: 1px solid gray;"
                                             class="mt-4"
                                         >
                                             Calculate

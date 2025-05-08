@@ -10,6 +10,8 @@ new Vue({
         // Form data
         selectedStrategy: null,
         poolingMethod: ['Soil pooling', 'Unpooled', 'DNA Pooling'],
+        organism: null,
+        organisms: ['Bacteria', 'Fungi', 'Animalia'],
         numSites: 1,
         numSamples: 10,
         pcrTime: 1,
@@ -18,7 +20,11 @@ new Vue({
         samplesPerDNAextraction: 24,
         personalHourRate: 0,
         poolingNumber: 9,
-
+        samplesPerLibrary: 1,
+        costOfLibrary: null,
+        pricePerSample: null,
+        storageOfPlatform: null,
+        sequencingDepth: 100,
         // Consumables table
         consumableHeaders: [
             { text: 'Item', value: 'name', sortable: true },
@@ -51,6 +57,24 @@ new Vue({
     computed: {
         formTitle() {
             return this.editedIndex === -1 ? 'New Consumable' : 'Edit Consumable'
+        },
+        sequencingDepthConfig() {
+            if (!this.selectedStrategy || !this.organism) return { value: 100, range: true, min: 25, max: 100 };
+            
+            const isPooled = this.selectedStrategy === 'Soil pooling' || this.selectedStrategy === 'DNA Pooling';
+            
+            if (!isPooled) return { value: 100, range: true, min: 25, max: 100 };
+            
+            switch(this.organism) {
+                case 'Animalia':
+                    return { value: 100, range: true, min: 25, max: 100 };
+                case 'Bacteria':
+                    return { value: 37.5, range: true, min: 25, max: 50 };
+                case 'Fungi':
+                    return { value: 75, range: true, min: 25, max: 100 };
+                default:
+                    return { value: 100, range: true, min: 25, max: 100 };
+            }
         }
     },
     methods: {
@@ -167,6 +191,23 @@ new Vue({
                 const unitsNeeded = totalVolumeNeeded / item.totalVolume;
                 return total + (unitsNeeded * item.price);
             }, 0);
+        }
+    },
+    watch: {
+        organism(newValue) {
+            switch(newValue) {
+                case 'Bacteria':
+                    this.sequencingDepth = 37.5;
+                    break;
+                case 'Animalia':
+                    this.sequencingDepth = 100;
+                    break;
+                case 'Fungi':
+                    this.sequencingDepth = 75;
+                    break;
+                default:
+                    this.sequencingDepth = 100;
+            }
         }
     },
     mounted() {
