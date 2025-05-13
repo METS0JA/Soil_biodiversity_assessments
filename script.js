@@ -105,7 +105,8 @@ new Vue({
            let pcrHours = Math.ceil(nrOfSamplesForPCR / this.samplesPerPCRrun) * this.pcrTime;
            let laborCost = (pcrHours + dnaExtractionHours) * this.personalHourRate;
            let consumablesCost = this.calculateConsumablesCost(nrOfSamplesForPCR, nrOfSamplesForExtraction);
-           let totalCost = laborCost + consumablesCost;
+           let sequencingCost = this.calculateSequencingCost(nrOfSamplesForPCR);    
+           let totalCost = laborCost + consumablesCost + sequencingCost;
             
             // Show warning dialog if any consumable is insufficient
             if (this.consumableWarnings.length > 0) {
@@ -116,7 +117,8 @@ new Vue({
                           `Labor cost: $${laborCost} (${pcrHours + dnaExtractionHours} hours)\n` +
                           `- DNA extraction: $${dnaExtractionHours * this.personalHourRate} (${dnaExtractionHours} hours)\n` +
                           `- PCR work: $${pcrHours * this.personalHourRate} (${pcrHours} hours)\n` +
-                          `Consumables cost: $${consumablesCost} (${nrOfSamplesForPCR} samples)`;
+                          `Consumables cost: $${consumablesCost} (${nrOfSamplesForPCR} samples)\n` +
+                          `Sequencing cost: $${sequencingCost} (${nrOfSamplesForPCR} samples)`;
             this.isBlue = true;
             
             console.log('Form submitted:', {
@@ -191,6 +193,11 @@ new Vue({
                 const unitsNeeded = totalVolumeNeeded / item.totalVolume;
                 return total + (unitsNeeded * item.price);
             }, 0);
+        },
+        calculateSequencingCost(nrOfSamplesForPCR) {
+            let sequencingCost = nrOfSamplesForPCR * this.sequencingDepth * this.sequencingPrice;
+            let libraryCost = this.costOfLibrary * nrOfSamplesForPCR / this.samplesPerLibrary;
+            return sequencingCost + libraryCost;
         }
     },
     watch: {
