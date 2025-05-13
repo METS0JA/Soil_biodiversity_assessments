@@ -25,6 +25,7 @@ new Vue({
         pricePerSample: null,
         storageOfPlatform: null,
         sequencingDepth: 100,
+        sampleSequencingDepth: null,
         // Consumables table
         consumableHeaders: [
             { text: 'Item', value: 'name', sortable: true },
@@ -255,7 +256,7 @@ new Vue({
                     } else {
                         nrOfSamplesForExtraction = this.numSites * this.numSamples;
                     }
-                    this.storageOfPlatform = nrOfSamplesForExtraction * (this.sequencingDepth / 100);
+                    this.storageOfPlatform = nrOfSamplesForExtraction * (this.sampleSequencingDepth / 100);
                 }
             },
             deep: true
