@@ -111,6 +111,7 @@ new Vue({
            let pcrHours = Math.ceil(nrOfSamplesForPCR / this.samplesPerPCRrun) * this.pcrTime;
            let laborCost = (pcrHours + dnaExtractionHours) * this.personalHourRate;
            let consumablesCost = this.calculateConsumablesCost(nrOfSamplesForPCR, nrOfSamplesForExtraction);
+           let libraryCost = this.costOfLibrary * Math.ceil((nrOfSamplesForPCR / this.samplesPerLibrary));
            let sequencingCost = this.calculateSequencingCost(nrOfSamplesForPCR);    
            let totalCost = laborCost + consumablesCost + sequencingCost;
             
@@ -124,7 +125,8 @@ new Vue({
                           `- DNA extraction: $${dnaExtractionHours * this.personalHourRate} (${dnaExtractionHours} hours)\n` +
                           `- PCR work: $${pcrHours * this.personalHourRate} (${pcrHours} hours)\n` +
                           `Consumables cost: $${consumablesCost} (${nrOfSamplesForPCR} samples)\n` +
-                          `Sequencing cost: $${sequencingCost} (${nrOfSamplesForPCR} samples)`;
+                          `Library cost: $${libraryCost.toFixed(1)}\n` +
+                          `Sequencing cost: $${sequencingCost.toFixed(1)} (${nrOfSamplesForPCR} samples)`;
             this.isBlue = true;
             
             console.log('Form submitted:', {
@@ -202,8 +204,7 @@ new Vue({
         },
         calculateSequencingCost(nrOfSamplesForPCR) {
             let sequencingCost = nrOfSamplesForPCR * this.pricePerSample;
-            let libraryCost = this.costOfLibrary * nrOfSamplesForPCR / this.samplesPerLibrary;
-            return sequencingCost + libraryCost;
+            return sequencingCost;
         }
     },
     watch: {
