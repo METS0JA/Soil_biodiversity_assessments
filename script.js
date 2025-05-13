@@ -201,7 +201,7 @@ new Vue({
             }, 0);
         },
         calculateSequencingCost(nrOfSamplesForPCR) {
-            let sequencingCost = nrOfSamplesForPCR * this.sequencingPrice;
+            let sequencingCost = nrOfSamplesForPCR * this.pricePerSample;
             let libraryCost = this.costOfLibrary * nrOfSamplesForPCR / this.samplesPerLibrary;
             return sequencingCost + libraryCost;
         }
