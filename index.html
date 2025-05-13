@@ -246,21 +246,22 @@
                                                         <v-col cols="12" md="4">
                                                             <v-slider
                                                                 v-model="sequencingDepth"
-                                                                :min="sequencingDepthConfig.range ? sequencingDepthConfig.min : 0"
-                                                                :max="sequencingDepthConfig.range ? sequencingDepthConfig.max : 100"
+                                                                :min="sequencingDepthConfig.min"
+                                                                :max="sequencingDepthConfig.max"
                                                                 :step="sequencingDepthConfig.range ? 0.1 : 1"
                                                                 label="Sequencing depth"
                                                                 thumb-label="always"
                                                                 :thumb-size="24"
                                                                 :track-color="'grey'"
                                                                 :color="'grey'"
+                                                                :disabled="sequencingDepthConfig.disabled"
                                                             ></v-slider>
-                                                            <div class="mb-2">
-                                                                <span class="text-caption">Recommended {{ organism === 'Bacteria' ? 'range' : 'value' }}: 
+                                                            <div class="mb-2" v-if="!sequencingDepthConfig.disabled">
+                                                                <span class="text-caption">Recommended {{ sequencingDepthConfig.range ? 'range' : 'value' }}: 
                                                                     <span class="font-weight-bold">
-                                                                        {{ organism === 'Bacteria' ? 
-                                                                            sequencingDepthConfig.min + '-' + sequencingDepthConfig.max + '%' : 
-                                                                            sequencingDepth + '%' }}
+                                                                        {{ sequencingDepthConfig.range ? 
+                                                                            sequencingDepthConfig.recommendedMin + '-' + sequencingDepthConfig.recommendedMax + '%' : 
+                                                                            sequencingDepthConfig.recommendedMax + '%' }}
                                                                     </span>
                                                                 </span>
                                                             </div>

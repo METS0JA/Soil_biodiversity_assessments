@@ -59,21 +59,26 @@ new Vue({
             return this.editedIndex === -1 ? 'New Consumable' : 'Edit Consumable'
         },
         sequencingDepthConfig() {
-            if (!this.selectedStrategy || !this.organism) return { value: 100, range: true, min: 25, max: 100 };
+            if (!this.selectedStrategy || !this.organism) return { value: 100, range: false, min: 25, max: 100, recommendedMax: 100, disabled: true };
             
-            const isPooled = this.selectedStrategy === 'Soil pooling' || this.selectedStrategy === 'DNA Pooling';
-            
-            if (!isPooled) return { value: 100, range: true, min: 25, max: 100 };
+            if (this.selectedStrategy === 'Unpooled') {
+                return { value: 100, range: false, min: 25, max: 100, recommendedMax: 100, disabled: true };
+            }
             
             switch(this.organism) {
                 case 'Animalia':
-                    return { value: 100, range: true, min: 25, max: 100 };
+                    return { value: 100, range: false, min: 25, max: 100, recommendedMax: 100 };
                 case 'Bacteria':
-                    return { value: 37.5, range: true, min: 25, max: 50 };
+                    return { value: 25, range: true, min: 25, max: 100, recommendedMax: 75, recommendedMin: 25 };
                 case 'Fungi':
-                    return { value: 75, range: true, min: 25, max: 100 };
+                    if (this.selectedStrategy === 'Soil pooling') {
+                        return { value: 100, range: false, min: 25, max: 100, recommendedMax: 100 };
+                    } else if (this.selectedStrategy === 'DNA Pooling') {
+                        return { value: 50, range: true, min: 25, max: 100, recommendedMax: 100, recommendedMin: 50 };
+                    }
+                    return { value: 100, range: false, min: 25, max: 100, recommendedMax: 100 };
                 default:
-                    return { value: 100, range: true, min: 25, max: 100 };
+                    return { value: 100, range: false, min: 25, max: 100, recommendedMax: 100 };
             }
         }
     },
@@ -202,19 +207,58 @@ new Vue({
     },
     watch: {
         organism(newValue) {
+            if (this.selectedStrategy === 'Unpooled') {
+                this.sequencingDepth = 100;
+                return;
+            }
+            
             switch(newValue) {
                 case 'Bacteria':
-                    this.sequencingDepth = 37.5;
+                    this.sequencingDepth = 25;
                     break;
                 case 'Animalia':
                     this.sequencingDepth = 100;
                     break;
                 case 'Fungi':
-                    this.sequencingDepth = 75;
+                    if (this.selectedStrategy === 'Soil pooling') {
+                        this.sequencingDepth = 100;
+                    } else if (this.selectedStrategy === 'DNA Pooling') {
+                        this.sequencingDepth = 50;
+                    } else {
+                        this.sequencingDepth = 100;
+                    }
                     break;
                 default:
                     this.sequencingDepth = 100;
             }
+        },
+        selectedStrategy(newValue) {
+            if (newValue === 'Unpooled') {
+                this.sequencingDepth = 100;
+                return;
+            }
+            
+            if (this.organism === 'Fungi') {
+                if (newValue === 'Soil pooling') {
+                    this.sequencingDepth = 100;
+                } else if (newValue === 'DNA Pooling') {
+                    this.sequencingDepth = 50;
+                }
+            }
+        },
+        '$data': {
+            handler(newValue) {
+                if (this.selectedStrategy) {
+                    let nrOfSamplesForExtraction;
+                    if (this.selectedStrategy === 'Soil pooling') {
+                        nrOfSamplesForExtraction = this.numSites * this.numSamples / this.poolingNumber;
+                    } else {
+                        nrOfSamplesForExtraction = this.numSites * this.numSamples;
+                    }
+                    this.storageOfPlatform = nrOfSamplesForExtraction * (this.sequencingDepth / 100);
+                }
+            },
+            deep: true
         }
     },
     mounted() {
