@@ -11,7 +11,7 @@ new Vue({
         selectedStrategy: null,
         poolingMethod: ['Soil pooling', 'Unpooled', 'DNA Pooling'],
         organism: null,
-        organisms: ['Bacteria', 'Fungi', 'Animalia'],
+        organisms: ['Bacteria', 'Fungi', 'Animal'],
         numSites: 1,
         numSamples: 10,
         pcrTime: 1,
@@ -23,9 +23,9 @@ new Vue({
         samplesPerLibrary: 1,
         costOfLibrary: null,
         pricePerSample: null,
-        storageOfPlatform: null,
         sequencingDepth: 100,
-        sampleSequencingDepth: null,
+        sampleSequencingDepth: 10,
+        x: 10,
         // Consumables table
         consumableHeaders: [
             { text: 'Item', value: 'name', sortable: true },
@@ -67,7 +67,7 @@ new Vue({
             }
             
             switch(this.organism) {
-                case 'Animalia':
+                case 'Animal':
                     return { value: 100, range: false, min: 25, max: 100, recommendedMax: 100 };
                 case 'Bacteria':
                     return { value: 25, range: true, min: 25, max: 100, recommendedMax: 75, recommendedMin: 25 };
@@ -201,7 +201,7 @@ new Vue({
             }, 0);
         },
         calculateSequencingCost(nrOfSamplesForPCR) {
-            let sequencingCost = nrOfSamplesForPCR * this.sequencingDepth * this.sequencingPrice;
+            let sequencingCost = nrOfSamplesForPCR * this.sequencingPrice;
             let libraryCost = this.costOfLibrary * nrOfSamplesForPCR / this.samplesPerLibrary;
             return sequencingCost + libraryCost;
         }
@@ -217,7 +217,7 @@ new Vue({
                 case 'Bacteria':
                     this.sequencingDepth = 25;
                     break;
-                case 'Animalia':
+                case 'Animal':
                     this.sequencingDepth = 100;
                     break;
                 case 'Fungi':
@@ -256,7 +256,7 @@ new Vue({
                     } else {
                         nrOfSamplesForExtraction = this.numSites * this.numSamples;
                     }
-                    this.storageOfPlatform = nrOfSamplesForExtraction * (this.sampleSequencingDepth / 1024);
+                    this.storageOfPlatform = nrOfSamplesForExtraction * (this.sampleSequencingDepth);
                 }
             },
             deep: true

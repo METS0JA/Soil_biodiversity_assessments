@@ -234,22 +234,11 @@
                                                         </v-col>
                                                         <v-col cols="12" md="4">
                                                             <v-text-field
-                                                                v-model.number="storageOfPlatform"
-                                                                label="Storage of platform"
-                                                                type="number"
-                                                                outlined
-                                                                suffix="Gb"
-                                                                min="0"
-                                                                :rules="[v => v >= 0 || 'Value must be greater than or equal to 0']"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col cols="12" md="4">
-                                                            <v-text-field
                                                                 v-model.number="sampleSequencingDepth"
                                                                 label="sequencing depth"
                                                                 type="number"
                                                                 outlined
-                                                                suffix="Mb"
+                                                                suffix="M"
                                                                 min="0"
                                                                 :rules="[v => v >= 0 || 'Value must be greater than or equal to 0']"
                                                             ></v-text-field>
@@ -268,12 +257,17 @@
                                                                 :disabled="sequencingDepthConfig.disabled"
                                                             ></v-slider>
                                                             <div class="mb-2" v-if="!sequencingDepthConfig.disabled">
-                                                                <span class="text-caption">Recommended {{ sequencingDepthConfig.range ? 'range' : 'value' }}: 
-                                                                    <span class="font-weight-bold">
+                                                                <span class="text-subtitle-2">Recommended {{ sequencingDepthConfig.range ? 'range' : 'value' }}: 
+                                                                    <span style="color: #2196f3;" class="font-weight-bold">
                                                                         {{ sequencingDepthConfig.range ? 
                                                                             sequencingDepthConfig.recommendedMin + '-' + sequencingDepthConfig.recommendedMax + '%' : 
                                                                             sequencingDepthConfig.recommendedMax + '%' }}
                                                                     </span>
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="text-subtitle-2">Recommended sequencing depth <span style="color: #2196f3;" class="font-weight-bold">{{ sampleSequencingDepth * (sequencingDepth / 100) + ' M' }}</span>: 
+                                                                   
                                                                 </span>
                                                             </div>
                                                         </v-col>
