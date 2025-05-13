@@ -256,7 +256,7 @@ new Vue({
                     } else {
                         nrOfSamplesForExtraction = this.numSites * this.numSamples;
                     }
-                    this.storageOfPlatform = nrOfSamplesForExtraction * (this.sampleSequencingDepth / 100);
+                    this.storageOfPlatform = nrOfSamplesForExtraction * (this.sampleSequencingDepth / 1024);
                 }
             },
             deep: true

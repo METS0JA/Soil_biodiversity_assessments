@@ -249,7 +249,7 @@
                                                                 label="sequencing depth"
                                                                 type="number"
                                                                 outlined
-                                                                suffix="M"
+                                                                suffix="Mb"
                                                                 min="0"
                                                                 :rules="[v => v >= 0 || 'Value must be greater than or equal to 0']"
                                                             ></v-text-field>
@@ -260,7 +260,7 @@
                                                                 :min="sequencingDepthConfig.min"
                                                                 :max="sequencingDepthConfig.max"
                                                                 :step="sequencingDepthConfig.range ? 0.1 : 1"
-                                                                label="depth precentage"
+                                                                label="Pooling effect"
                                                                 thumb-label="always"
                                                                 :thumb-size="24"
                                                                 :track-color="'grey'"
